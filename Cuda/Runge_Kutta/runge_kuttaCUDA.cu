@@ -57,7 +57,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
-    time_t timeSeed = time(0);
+    time_t timeSeed = 1234567890; //random seed here // time(0);
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
@@ -158,6 +158,8 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
+    //double generationsNum = 100000000;
+
     for(int i = 0; i < generationsNum; i++){
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
@@ -171,14 +173,14 @@ double optimize(const int numThreads, const int blockThreads){
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
-                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
+                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); 
                 double alpha = (mt_rand() % 629) / 100.0 - 3.14;
                 double beta = (mt_rand() % 629) / 100.0 - 3.14;
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
         
                 coefficients<double> testcoeff;
                 for(int j = 0; j < testcoeff.gammaSize; j++){
-                    testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                    testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0; // orignally: 201/10.0 - 10.0;
                 }
                 for(int j = 0; j < testcoeff.tauSize; j++){
                     testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;

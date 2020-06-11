@@ -49,6 +49,7 @@ void crossOver_wholeRandom(int mask[], mt19937_64 & rng){
 //Create a mask the flips just the gamma coefficients
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
 // 2's correspond to Gamma coefficients
+
 void crossOver_gammaPos(int mask[]){
     for(int i = 0; i < OPTIM_VARS; i++){
         if((i >= 0) && (i <= 6 ) ){
@@ -57,8 +58,7 @@ void crossOver_gammaPos(int mask[]){
             mask[i] = 1;
         }
     }
-    return;
-}
+    return
 
 //Create a mask the flips just the tau coefficients
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
