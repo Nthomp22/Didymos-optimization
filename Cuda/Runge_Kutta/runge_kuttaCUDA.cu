@@ -292,7 +292,8 @@ double optimize(const int numThreads, const int blockThreads) {
     }
 
 
-    individualDifference.close();
+    individualDifferenceBest.close();
+    individualDifferenceWorst.close();
 
     delete [] inputParameters;
     delete [] survivors;
