@@ -212,8 +212,8 @@ double optimize(const int numThreads, const int blockThreads) {
         std::sort(inputParameters, inputParameters + numThreads, greaterInd); // put the individuals in order so we can replace the worst ones
 
         // Calculate the current generation's cost function range
-        posDiffRange = posCost(inputParameters, numThreads);
-        velDiffRange = velCost(inputParameters, numThreads);
+        posDiffRange = posRange(inputParameters, numThreads);
+        velDiffRange = velRange(inputParameters, numThreads);
 
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE

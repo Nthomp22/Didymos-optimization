@@ -18,16 +18,16 @@ void selectWinners(Individual* pool, int selectionSize, Individual* survivors);
     // pool: the entire generation (must already be sorted)
     // size: the number of Individuals in the pool
 // Output:
-    // costRange: the difference in cost function between the least and greatest Individuals
-double posCost(Individual* pool, int size);
+    // range: the difference in posDiff between the least and greatest Individuals
+double posRange(Individual* pool, int size);
 
 // Calculates the range of velocities from the asteroid within the pool
 // Input:
     // pool: the entire generation (must already be sorted)
     // size: the number of Individuals in the pool
 // Output:
-    // costRange: the difference in cost function between the least and greatest Individuals
-double velCost(Individual* pool, int size);
+    // range: the difference in velDiff between the least and greatest Individuals
+double velRange(Individual* pool, int size);
 
 // Determines whether the pool meets requirements for convergence
 // Input:
