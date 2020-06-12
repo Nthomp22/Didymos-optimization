@@ -157,9 +157,11 @@ double optimize(const int numThreads, const int blockThreads) {
     int newInd = numThreads; // the whole population is new the first time through the loop
 
     // setup output of results
-    std::ofstream individualDifference;
-    individualDifference.open("individualDifference.csv");
-    individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
+    std::ofstream individualDifferenceBest, individualDifferenceWorst;
+    individualDifferenceBest.open("individualDifferenceBest.csv");
+    individualDifferenceWorst.open("individualDifferenceWorst.csv");
+    individualDifferenceBest << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
+    individualDifferenceWorst << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
@@ -241,11 +243,15 @@ double optimize(const int numThreads, const int blockThreads) {
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
-            // Append the best Individuals into a csv file to view progress over generations
+            // Append the best and worst Individuals into a csv file to view progress over generations
             
-            individualDifference << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
+            individualDifferenceBest << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
             << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
             << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," << "\n";
+
+            individualDifferenceWorst << inputParameters[numThreads-1].posDiff << "," << inputParameters[numThreads - 1].velDiff << ","
+                << inputParameters[numThreads - 1].finalPos.r << "," << inputParameters[numThreads - 1].finalPos.theta << "," << inputParameters[numThreads - 1].finalPos.z << ","
+                << inputParameters[numThreads - 1].finalPos.vr << "," << inputParameters[numThreads - 1].finalPos.vtheta << "," << inputParameters[numThreads - 1].finalPos.vz << "," << "\n";
         }
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
