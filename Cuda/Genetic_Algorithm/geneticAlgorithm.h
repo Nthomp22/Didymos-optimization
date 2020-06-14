@@ -53,5 +53,14 @@ bool posConverge(Individual* pool, int size);
     // convgFlag: Boolean indicating whether velDiffs have converged
 bool velConverge(Individual* pool, int size);
 
+// Determines the current appropriate annealing rate and adjusts max and min
+// Input: 
+    // pool: the entire generation (must already be sorted)
+    // size: the number of Individuals in the pool
+    // scale: the precision to which Individuals' parameters are indistinguishable
+    // amax: the maximum annealing rate
+    // amin: the minimum annealing rate
+void reAnneal(Individual* pool, int size, double amax, double amin);
+
 #include "geneticAlgorithm.cpp"
 #endif

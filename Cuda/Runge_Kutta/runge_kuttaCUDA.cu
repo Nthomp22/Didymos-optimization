@@ -166,10 +166,11 @@ double optimize(const int numThreads, const int blockThreads) {
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
-    // Initialize a generation counter
+    // Initialize a generation counter and convergence flag
     int i = 1;
+    bool convgFlag = false;
 
-    while (!converge(inputParameters, numThreads)) {
+    while (!convgFlag) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -216,6 +217,12 @@ double optimize(const int numThreads, const int blockThreads) {
         // Calculate the current generation's cost function range
         posDiffRange = posRange(inputParameters, numThreads);
         velDiffRange = velRange(inputParameters, numThreads);
+        
+        // Check if this generation has converged
+        convgFlag = converge(inputParameters, size);
+
+        // Initialize variable annealing limits for the next generation
+        double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
 
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
@@ -237,6 +244,8 @@ double optimize(const int numThreads, const int blockThreads) {
             
             std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
             std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
+
+            reAnneal(inputParameters, numThreads, annealMax, annealMin); 
 
             prevBestPos = inputParameters[0].posDiff;
             prevBestVel = inputParameters[0].velDiff;

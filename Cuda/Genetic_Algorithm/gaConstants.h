@@ -28,4 +28,6 @@
 
 #define CONVG_TOL 10.0 // minimum percent difference for convergence
 
+#define ANNEAL_SCALE 1.0e-7 // precision of data convergence by which annealing rate is increased
+
 #endif

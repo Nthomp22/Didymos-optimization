@@ -42,3 +42,28 @@ bool velConverge(Individual* pool, int size) {
     }
     else return false;
 }
+
+void reAnneal(Individual* pool, int size, double amax, double amin) {
+    std::cout << "Re-annealing: [";
+    int i = 0;
+    if (trunc(pool[0].posDiff/ANNEAL_SCALE) == 0) {
+        std::cout << ">";
+        i++;
+        if (trunc(pool[size-1].posDiff/ANNEAL_SCALE) == 0) {
+            std::cout << ">";
+            i++;
+            if (trunc(pool[0].velDiff/ANNEAL_SCALE) == 0) {
+                std::cout << ">";
+                i++;
+                if (trunc(pool[size-1].velDiff/ANNEAL_SCALE) == 0) {
+                    std::cout << ">";
+                    i++;
+                }
+            }
+        }
+    }
+    std::cout << "]\n";
+    amax *= pow(2,i);
+    amin *= pow(2,i);
+    return;
+}
