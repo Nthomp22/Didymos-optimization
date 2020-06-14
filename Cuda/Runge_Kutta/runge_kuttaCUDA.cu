@@ -219,7 +219,7 @@ double optimize(const int numThreads, const int blockThreads) {
         velDiffRange = velRange(inputParameters, numThreads);
         
         // Check if this generation has converged
-        convgFlag = converge(inputParameters, size);
+        convgFlag = converge(inputParameters, numThreads);
 
         // Initialize variable annealing limits for the next generation
         double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
