@@ -223,6 +223,9 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // Initialize variable annealing limits for the next generation
         double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
+        
+        //distinguish rate start
+        double distinguishRate = 1.0e-7;
 
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
@@ -245,7 +248,17 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
             std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
-            reAnneal(inputParameters, numThreads, annealMax, annealMin); 
+            if(distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
+                //half anneal  max and min
+                annealMax = annealMax / 2;
+                annealMin = annealMin / 2;
+                if(trunc(inputParameters[0].posDiff/distinguishRate)==0) {
+                    distinguishRate = distinguishRate/10;
+                }
+                std::cout << "New anneal max: " << annealMax << "  New anneal min: " << annealMin << " New distinguishRate: " << distinguishRate << std::endl;
+            } 
+
+            //reAnneal(inputParameters, numThreads, annealMax, annealMin); 
 
             prevBestPos = inputParameters[0].posDiff;
             prevBestVel = inputParameters[0].velDiff;
@@ -566,4 +579,20 @@ __global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, 
         elements<double> k1, k2, k3, k4, k5, k6, k7;
         rkCalc(*curTime, *tripTime, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
     }
+}
+
+bool distinguishableDifference(double p1, double p2, double distinguishRate) {
+
+    double p1Num = trunc(p1/distinguishRate);
+    double p2Num = trunc(p2/distinguishRate);
+    
+    std:: cout << "p1Num: " << p1Num << std::endl;
+    std:: cout << "p2Num: " << p2Num << std::endl;
+
+    if(p1Num == p2Num) {
+        return true;
+    } else {
+        return false;
+    }
+
 }
