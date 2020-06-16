@@ -238,7 +238,7 @@ double optimize(const int numThreads, const int blockThreads) {
 
 
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        if (i % 100 == 0) { 
+        //if (i % 100 == 0) { 
             // Display the cost function range within every 100th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
@@ -248,6 +248,14 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
             std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
+            std::cout << "best:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[0].velDiff << std::endl;
+            std::cout << "worst:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
+            
+        if (i % 50 == 0) {
             if(distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
                 //half anneal  max and min
                 annealMax = annealMax / 2;
@@ -257,6 +265,7 @@ double optimize(const int numThreads, const int blockThreads) {
                 }
                 std::cout << "New anneal max: " << annealMax << "  New anneal min: " << annealMin << " New distinguishRate: " << distinguishRate << std::endl;
             } 
+        }
 
             //reAnneal(inputParameters, numThreads, annealMax, annealMin); 
 
@@ -274,7 +283,7 @@ double optimize(const int numThreads, const int blockThreads) {
             individualDifferenceWorst << inputParameters[numThreads-1].posDiff << "," << inputParameters[numThreads - 1].velDiff << ","
                 << inputParameters[numThreads - 1].finalPos.r << "," << inputParameters[numThreads - 1].finalPos.theta << "," << inputParameters[numThreads - 1].finalPos.z << ","
                 << inputParameters[numThreads - 1].finalPos.vr << "," << inputParameters[numThreads - 1].finalPos.vtheta << "," << inputParameters[numThreads - 1].finalPos.vz << "," << "\n";
-        }
+        //}
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
