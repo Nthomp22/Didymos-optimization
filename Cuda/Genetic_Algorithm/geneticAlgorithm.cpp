@@ -20,17 +20,11 @@ double velRange(Individual* pool, int size) {
 }
 
 bool converge(Individual* pool, int size) {
-    return posConverge(pool, size) && velConverge(pool, size);
+    return posConverge(pool) && velConverge(pool, size);
 }
 
-bool posConverge(Individual* pool, int size) {
-    if (pool[size-1].posDiff < POSITION_THRESH) {
-        if (posRange(pool, size)/pool[0].posDiff < CONVG_TOL) {
-            return true;
-        }
-        else return false;
-    }
-    else return false;
+bool posConverge(Individual* pool) {
+    return pool[0].posDiff < POSITION_THRESH;
 }
 
 bool velConverge(Individual* pool, int size) {

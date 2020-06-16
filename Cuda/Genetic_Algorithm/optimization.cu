@@ -39,10 +39,16 @@ int main () {
 
     //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
     //efficiencyGraph.open("efficiencyGraph.csv");
-    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-    optimize(numThreads, blockThreads); // optimize() currently declared in runge_kuttaCUDA.cuh
-    //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
-    //efficiencyGraph.close();
+    double newC3Energy = C3Energy;
+    while(true) {
+        std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+        std::cout << "C3Energy: " << newC3Energy << std::endl;
+
+        optimize(numThreads, blockThreads, newC3Energy); // optimize() currently declared in runge_kuttaCUDA.cuh
+        //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
+        //efficiencyGraph.close();
+        newC3Energy = newC3Energy - 10000;
+    }
     
     delete launchCon;
 

@@ -56,7 +56,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     return best;
 }
 
-double optimize(const int numThreads, const int blockThreads) {
+double optimize(const int numThreads, const int blockThreads, double c3Energy) {
     double calcPerS = 0;
     time_t timeSeed = time(0);
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -169,10 +169,14 @@ double optimize(const int numThreads, const int blockThreads) {
     // Initialize a generation counter and convergence flag
     int i = 1;
     bool convgFlag = false;
+    // Initialize variable annealing limits for the next generation
+    double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
+    //distinguish rate start
+    double distinguishRate = 1.0e-7;
 
     while (!convgFlag) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd);
+        initializePosition(inputParameters + (numThreads - newInd), newInd, c3Energy);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
 
@@ -219,13 +223,10 @@ double optimize(const int numThreads, const int blockThreads) {
         velDiffRange = velRange(inputParameters, numThreads);
         
         // Check if this generation has converged
-        convgFlag = converge(inputParameters, numThreads);
+        convgFlag = posConverge(inputParameters);
 
         // Initialize variable annealing limits for the next generation
-        double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
         
-        //distinguish rate start
-        double distinguishRate = 1.0e-7;
 
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
@@ -238,15 +239,15 @@ double optimize(const int numThreads, const int blockThreads) {
 
 
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        //if (i % 100 == 0) { 
+        if (i % 50 == 0) { 
             // Display the cost function range within every 100th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
             std::cout << "posDiffRange: " << posDiffRange << std::endl;
             std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
-            std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
-            std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
+            std::cout << "posDiffRange change over 20 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
+            std::cout << "velDiffRange change over 20 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
             std::cout << "best:" << std::endl;
             std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
@@ -254,12 +255,13 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "worst:" << std::endl;
             std::cout << "\tposDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
             std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
-            
-        if (i % 50 == 0) {
+        //}
+        //if (i % 50 == 0) {
             if(distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
                 //half anneal  max and min
-                annealMax = annealMax / 2;
-                annealMin = annealMin / 2;
+                annealMax = annealMax / 2.0;
+                annealMin = annealMin / 2.0;
+
                 if(trunc(inputParameters[0].posDiff/distinguishRate)==0) {
                     distinguishRate = distinguishRate/10;
                 }
@@ -286,12 +288,14 @@ double optimize(const int numThreads, const int blockThreads) {
         //}
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
-        double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
+        double new_anneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
         
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
         // Step into the next generation
         i++;
+
+
         
     }
 
@@ -452,9 +456,9 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     return;
 }
 
-__host__ void initializePosition(Individual *individuals, int size) {
+__host__ void initializePosition(Individual *individuals, int size, double c3) {
     for (int i = 0; i < size ;i++) {
-        individuals[i].initialize();
+        individuals[i].initialize(c3);
     }
 }
 

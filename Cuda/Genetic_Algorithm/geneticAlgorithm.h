@@ -43,7 +43,7 @@ bool converge(Individual* pool, int size);
     // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether posDiffs have converged
-bool posConverge(Individual* pool, int size);
+bool posConverge(Individual* pool);
 
 // Determines whether the pool's velDiffs have converged
 // Input:
