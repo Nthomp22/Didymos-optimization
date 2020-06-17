@@ -26,5 +26,8 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 //unit tests
 __global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n);
 
+//returns the convgFlag
+bool getConvgFlag();
+
 #include "runge_kuttaCUDA.cu"
 #endif

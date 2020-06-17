@@ -16,6 +16,8 @@
 #include <random>
 #include <string>
 
+bool convgFlag;
+
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
 Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol) {
     Individual best = original;
@@ -57,7 +59,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     return best;
 }
 
-double optimize(const int numThreads, const int blockThreads, double c3Energy) {
+double optimize(const int numThreads, const int blockThreads, double c3Energy, int runNumber) {
     double calcPerS = 0;
     time_t timeSeed = time(0);
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -161,8 +163,8 @@ double optimize(const int numThreads, const int blockThreads, double c3Energy) {
     std::ofstream individualDifferenceBest, individualDifferenceWorst;
     //individualDifferenceBest.open("individualDifferenceBest.csv");
     //individualDifferenceWorst.open("individualDifferenceWorst.csv");
-    individualDifferenceBest.open( std::to_string(timeSeed) + "best.csv");
-    individualDifferenceWorst.open( std::to_string(timeSeed) + "worst.csv");
+    individualDifferenceBest.open( std::to_string(runNumber) + "best.csv");
+    individualDifferenceWorst.open( std::to_string(runNumber) + "worst.csv");
     individualDifferenceBest << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     individualDifferenceWorst << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
@@ -171,7 +173,7 @@ double optimize(const int numThreads, const int blockThreads, double c3Energy) {
 
     // Initialize a generation counter and convergence flag
     int i = 1;
-    bool convgFlag = false;
+    convgFlag = false;
     // Initialize variable annealing limits for the next generation
     double annealMax = ANNEAL_MAX, annealMin = ANNEAL_MIN;
     //distinguish rate start
@@ -295,10 +297,12 @@ double optimize(const int numThreads, const int blockThreads, double c3Energy) {
         
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
+        if(generationsNum == i) {
+            break;
+        }
+
         // Step into the next generation
         i++;
-
-
         
     }
 
@@ -611,4 +615,8 @@ bool distinguishableDifference(double p1, double p2, double distinguishRate) {
         return false;
     }
 
+}
+
+bool getConvgFlag() {
+    return convgFlag;
 }

@@ -40,16 +40,27 @@ int main () {
     //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
     //efficiencyGraph.open("efficiencyGraph.csv");
     double newC3Energy = C3Energy;
-    while(true) {
-        std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-        std::cout << "C3Energy: " << newC3Energy << std::endl;
+    std::ofstream c3EnergyFile;
+    c3EnergyFile.open("C3EnergyChange.csv");
+    c3EnergyFile << "Number of convergences" << "," << "C3Energy Num" << "," << "\n";
+    for(int x = 0; x<30; x++) {
+        int convergeNum = 0;
+        for(int i = 0; i<10; i++) {
+            std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+            std::cout << "C3Energy: " << newC3Energy << std::endl;
 
-        optimize(numThreads, blockThreads, newC3Energy); // optimize() currently declared in runge_kuttaCUDA.cuh
-        //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
-        //efficiencyGraph.close();
-        newC3Energy = newC3Energy - 10000;
+            optimize(numThreads, blockThreads, newC3Energy, (x*100) + i); // optimize() currently declared in runge_kuttaCUDA.cuh
+            if(getConvgFlag()) {
+                convergeNum++;
+            } else {
+                std::cout << "didn't converge" << std::endl;
+            }
+        }
+        c3EnergyFile << convergeNum << "," << newC3Energy << "\n";
+        newC3Energy = newC3Energy - 1000;
     }
     
+    c3EnergyFile.close();
     delete launchCon;
 
     return 0;
