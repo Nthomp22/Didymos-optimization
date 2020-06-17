@@ -14,6 +14,7 @@
 #include <chrono>
 #include <algorithm> // sort(), shuffle()
 #include <random>
+#include <string>
 
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
 Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol) {
@@ -158,8 +159,10 @@ double optimize(const int numThreads, const int blockThreads, double c3Energy) {
 
     // setup output of results
     std::ofstream individualDifferenceBest, individualDifferenceWorst;
-    individualDifferenceBest.open("individualDifferenceBest.csv");
-    individualDifferenceWorst.open("individualDifferenceWorst.csv");
+    //individualDifferenceBest.open("individualDifferenceBest.csv");
+    //individualDifferenceWorst.open("individualDifferenceWorst.csv");
+    individualDifferenceBest.open( std::to_string(timeSeed) + "best.csv");
+    individualDifferenceWorst.open( std::to_string(timeSeed) + "worst.csv");
     individualDifferenceBest << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     individualDifferenceWorst << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
